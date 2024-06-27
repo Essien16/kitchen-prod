@@ -38,7 +38,7 @@ const Controller = {
         }
 
         try {
-            const menuItem = await MenuItem.findMenuItemByVendorId(vendorId);
+            const menuItem = await MenuItem.findMenuItemsByVendorId(vendorId);
             return res.status(200).json(menuItem);
         } catch (error) {
             return res.status(500).json({ message: "Internal server error."})
