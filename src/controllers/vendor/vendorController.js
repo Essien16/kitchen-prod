@@ -31,7 +31,7 @@ const Controller = {
     },
 
     listMenuItems: async (req, res) => {
-        const { vendorId } = req.body; //I'd have typically gotten the vendore ID from the header but for the sake of the task, I'm using this implementation.
+        const { vendorId } = req.query; //I'd have typically gotten the vendore ID from the header but for the sake of the task, I'm using this implementation.
 
         if(!vendorId) {
             return res.status(400).json({ message: "Vendor ID is required."})
