@@ -13,7 +13,7 @@ const Controller = {
     },
 
     listMenuItemForVendor: async (req, res) => {
-        const vendorId = req.body;
+        const vendorId = req.query;
         if (!vendorId) {
             return res.status(404).json({ message: "Vendor with the given ID not found. Please enter a valid ID"})
         }
