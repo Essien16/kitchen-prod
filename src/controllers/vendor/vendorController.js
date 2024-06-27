@@ -48,7 +48,7 @@ const Controller = {
     updateMenuItem: async (req, res) => {
         const { id, name, description, price } = req.body;
 
-        if (!id || name || description || price) {
+        if (!id || !name || !description || !price) {
             return res.status(400).json({ message: "All fields required to update Menu"})
         }
 
