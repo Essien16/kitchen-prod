@@ -27,7 +27,21 @@ const Controller = {
             console.error(error);
             res.status(500).json({ message: "Internal server error."})
         }
-    }
+    },
+
+    viewVendor: async (req, res) => {
+        const { name } = req.body;
+        try {
+            const vendor = await Vendor.findOneByName(name);
+            if (!vendor) {
+                return res.status(404).json({ message: "Vendor not found"});
+            }
+            const { password, ...viewVendor } = vendor; 
+            return res.status(200).json(viewVendor)
+        } catch (error) {
+            return res.status(500).json({ message: "Internal server error"})
+        }
+    },
 };
 
 module.exports = Controller;
