@@ -19,6 +19,9 @@ const Controller = {
         }
         try {
             const menuItem = await MenuItem.findMenuItemsByVendorId(vendorId);
+            if (!menuItem || menuItem.length === 0) {
+                return res.status(404).json({ message: `No menu items found for vendor ID ${vendorId}.` });
+            }
             return res.status(200).json(menuItem);
         } catch (error) {
             console.error(error);
