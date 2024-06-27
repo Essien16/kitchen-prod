@@ -41,6 +41,24 @@ const Controller = {
         } catch (error) {
             return res.status(500).json({ message: "Internal server error"})
         }
+    },
+
+    viewMenuItemDetail: async (req, res) => {
+        const { itemId } = req.query;
+
+        if (!itemId) {
+            return res.status(400).json({ message: "Item ID is required."})
+        }
+        try {
+            const item = await MenuItem.findMenuItemById(itemId);
+            if (!item) {
+                return res.status(404).json({ message: "Item not found" })
+            }
+            return res.status(200).json(item)
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: "Internal server error"});
+        }
     }
 };
 

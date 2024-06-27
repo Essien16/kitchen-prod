@@ -10,6 +10,7 @@ router.post("/login", customerAuthController.login);
 router.get("/list-vendor", auth, customerController.listVendor);
 router.get("/list-menu-item-for-vendor", auth, customerController.listMenuItemForVendor);
 router.post("/vendor-info", auth, customerController.viewVendor);
+router.get("/menu-item-details", auth, customerController.viewMenuItemDetail);
 
 
 module.exports = {
