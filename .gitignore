@@ -1,5 +1,5 @@
 node_modules/
 .env
+.env.test
 logs/
 package-lock.json
-test.js

@@ -5,7 +5,9 @@ const Controller = {
     listVendor: async (req, res) => {
         try {
             const vendors = await Vendor.findAllVendors();
-            return res.status(200).json(vendors);
+
+            const listvendors = vendors.map(({ password, ...listvendors }) => listvendors);
+            return res.status(200).json(listvendors);
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: "Internal server error."});
@@ -30,7 +32,7 @@ const Controller = {
     },
 
     viewVendor: async (req, res) => {
-        const { name } = req.body;
+        const { name } = req.query;
         try {
             const vendor = await Vendor.findOneByName(name);
             if (!vendor) {
