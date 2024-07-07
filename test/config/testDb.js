@@ -4,7 +4,7 @@ async function setupTestDatabase() {
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: "Theunicorn25$",
+    password: process.env.DB_TEST_PASS,
   });
 
   await connection.query("DROP DATABASE IF EXISTS kitchenTestDb");
