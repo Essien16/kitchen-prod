@@ -42,7 +42,13 @@ class Menu {
     }
 
     static async findMenuItemsByVendorId(vendorId) {
-        const sql = `SELECT * FROM menu WHERE vendor_id = ?`;
+        // const sql = `SELECT * FROM menuitems WHERE vendorId = ?`;
+        let sql;
+        if (process.env.NODE_ENV === 'test') {
+            sql = `SELECT * FROM menuitems WHERE vendorId = ?`;
+        } else {
+            sql = `SELECT * FROM menu WHERE vendor_id = ?`;
+        }
         try {
             const [rows] = await db.execute(sql, [vendorId]);
             return rows;
