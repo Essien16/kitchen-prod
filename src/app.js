@@ -40,7 +40,7 @@
   
 // module.exports = app;
 
-//PS: I DID THIS BECAUSE THE express-request-id MIDDLEWARE WA
+//PS: I DID THIS BECAUSE THE express-request-id MIDDLEWARE was giving me issues when I was testing
 
 const express = require("express");
 const session = require("express-session");

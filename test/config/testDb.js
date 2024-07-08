@@ -27,14 +27,15 @@ async function setupTestDatabase() {
       vendorId INT NOT NULL,
       name VARCHAR(255) NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
+      description VARCHAR(255) NOT NULL,
       FOREIGN KEY (vendorId) REFERENCES vendors(id)
     )
   `);
 
   await connection.query("INSERT INTO vendors (name, email, password, role) VALUES ('Vendor1', 'vendor1@example.com', 'password1', 'vendor')");
   await connection.query("INSERT INTO vendors (name, email, password, role) VALUES ('Vendor2', 'vendor2@example.com', 'password2', 'vendor')");
-  await connection.query("INSERT INTO menuItems (vendorId, name, price) VALUES (1, 'MenuItem1', 10.00)");
-  await connection.query("INSERT INTO menuItems (vendorId, name, price) VALUES (1, 'MenuItem2', 15.00)");
+  await connection.query("INSERT INTO menuItems (id, vendorId, name, price, description) VALUES (1, 1, 'MenuItem1', 10.00, 'Menu item 1 for vendorId 1')");
+  await connection.query("INSERT INTO menuItems (id, vendorId, name, price, description) VALUES (2, 1, 'MenuItem2', 15.00, 'Menu item 2 for vendorId 1')");
 
   await connection.end();
 }

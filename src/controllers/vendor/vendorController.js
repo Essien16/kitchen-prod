@@ -3,8 +3,8 @@ const MenuItem = require("../../models/menu");
 
 const Controller = {
     viewVendorController: async (req, res) => {
-        const { name } = req.body;
-        // const { name } = req.query;
+        //const { name } = req.body;
+        const { name } = req.query;
         try {
             const vendor = await Vendor.findOneByName(name);
             if (!vendor) {
@@ -55,7 +55,7 @@ const Controller = {
         try {
             const affectedRows = await MenuItem.updateMenuItem(id, name, description, price);
             if (affectedRows === 0) {
-                return res.status(400).json({ message: "Menu item not found"});
+                return res.status(404).json({ message: "Menu item not found"});
             }
             return res.status(200).json({ message: "Menu Item updated successfully."})
         } catch (error) {
@@ -78,7 +78,7 @@ const Controller = {
         } catch (error) {
             console.error(error)
             return res.status(500).json({ message: "Internal server error."})
-        }
+        };
     }
 };
 

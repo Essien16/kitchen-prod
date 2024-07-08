@@ -3,7 +3,7 @@ const vendorController = require("../../controllers/vendor/vendorController");
 
 const router = express.Router();
 
-router.post("/view-vendor", vendorController.viewVendorController);
+router.get("/view-vendor-profile", vendorController.viewVendorController);
 router.post("/add-menu-item", vendorController.addMenuItem);
 router.post("/list-menu-item", vendorController.listMenuItems);
 router.patch("/update-menu-item", vendorController.updateMenuItem);

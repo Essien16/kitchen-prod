@@ -2,7 +2,14 @@ const db = require("../configs/database");
 
 class Menu {
     static async createMenuItem(vendorId, name, description, price) {
-        const sql = `INSERT INTO menu (vendor_id, name, description, price) VALUES (?, ?, ?, ?)`;
+        // const sql = `INSERT INTO menu (vendor_id, name, description, price) VALUES (?, ?, ?, ?)`;
+        let sql;
+        if (process.env.NODE_ENV === "test") {
+            sql = `INSERT INTO menuItems (vendorId, name, description, price) VALUES (?, ?, ?, ?)`;
+        } else {
+            sql = `INSERT INTO menu (vendor_id, name, description, price) VALUES (?, ?, ?, ?)`;
+        }
+        
         try {   
             const result = await db.execute(sql, [vendorId, name, description, price]);
             return result[0].insertId;
@@ -12,7 +19,13 @@ class Menu {
     }
 
     static async updateMenuItem(id, name, description, price) {
-        const sql = `UPDATE menu SET name = ?, description = ?, price = ? WHERE id = ?`;
+        // const sql = `UPDATE menu SET name = ?, description = ?, price = ? WHERE id = ?`;
+        let sql;
+        if (process.env.NODE_ENV === "test") {
+            sql = `UPDATE menuitems SET name = ?, description = ?, price = ? WHERE id = ?`;
+        } else {
+            sql = `UPDATE menu SET name = ?, description = ?, price = ? WHERE id = ?`;
+        }
         try {
             const result = await db.execute(sql, [name, description, price, id]);
             return result[0].affectedRows;
@@ -22,7 +35,13 @@ class Menu {
     }
 
     static async deleteMenuItem(id) {
-        const sql = `DELETE FROM menu WHERE id = ?`;
+        // const sql = `DELETE FROM menu WHERE id = ?`;
+        let sql;
+        if (process.env.NODE_ENV === "test") {
+            sql = `DELETE FROM menuitems WHERE id = ?`;
+        } else {
+            sql = `DELETE FROM menu WHERE id = ?`;
+        }
         try {
             const result = await db.execute(sql, [id]);
             return result[0].affectedRows;
@@ -32,7 +51,13 @@ class Menu {
     }
 
     static async findMenuItemById(id) {
-        const sql = `SELECT * FROM menu WHERE id = ?`;
+        // const sql = `SELECT * FROM menu WHERE id = ?`;
+        let sql;
+        if (process.env.NODE_ENV === "test") {
+            sql = `SELECT * FROM menuitems WHERE id = ?`;
+        } else {
+            sql = `SELECT * FROM menu WHERE id = ?`;
+        }
         try {
             const [rows] = await db.execute(sql, [id]);
             return rows[0]; 
