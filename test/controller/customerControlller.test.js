@@ -1,66 +1,102 @@
 const request = require("supertest");
-const server = require("../../src/index");
-const Vendor = require("../../src/models/vendor");
-const { response } = require("../../src/app");
+const app = require("../../src/index");
+const jwt = require("jsonwebtoken");
 
-jest.mock("../../src/middleware/authMiddleware", () => jest.fn((req, res, next) => {
-  req.user = { id: 1 }; 
-  next();
-}));
+let authToken;
+
+beforeAll(async () => {
+  authToken = jwt.sign({ id: 1, role: "user" }, "igotintochowdeck", { expiresIn: "1h" });
+});
 
 describe("Customer Controller", () => {
-  beforeEach(async () => {
-    await Vendor.createVendor({ name: "Vendor1", email: "vendor1@gmail.com.com", password: "pass1", role: "vendor" });
-    await Vendor.createVendor({ name: "Vendor2", email: "vendor2@gmail.com.com", password: "pass2", role: "vendor" });
+  describe("listVendor", () => {
+    it("should return a list of vendors without passwords", async () => {
+        const response = await request(app).get("/api/v1/customer/list-vendor").set("Authorization", `Bearer ${authToken}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([
+            { id: 1, name: "Vendor1", email: "vendor1@example.com", role: "vendor" },
+            { id: 2, name: "Vendor2", email: "vendor2@example.com", role: "vendor" }
+        ]);
+    });
   });
 
-  afterEach(async () => {
-    await Vendor.clearTable();
-  });
+  describe("listMenuItemForVendor", () => {
+    it("should return a list of menu items for a given vendor ID", async () => {
+      const response = await request(app).get("/api/v1/customer/list-menu-item-for-vendor?vendorId=1").set("Authorization", `Bearer ${authToken}`);
 
-  describe("GET /api/v1/customer/list-vendor", () => {
-    it("should return the list of vendors in the database without showing the passwords", async () => {
-      const res = await request(server).get("/api/v1/customer/list-vendor");
-
-      expect(res.status).toBe(200);
-      expect(res.body).toEqual([
-        { id: expect.any(Number), email: "vendor1@gmail.com", name: "Vendor1", role: "vendor" },
-        { id: expect.any(Number), email: "vendor2@gmail.com", name: "Vendor2", role: "vendor" }
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([
+        { id: expect.any(Number), name: "MenuItem1", vendorId: 1, price: "10.00", description: "Menu item 1 for vendorId 1" },
+        { id: expect.any(Number), name: "MenuItem2", vendorId: 1, price: "15.00", description: "Menu item 2 for vendorId 1" },
       ]);
     });
 
-    it("should handle internal server errors", async () => {
-      const res = await response(server).get("/api/v1/customer/list-vendor");
+    it("should return 404 if vendor ID is not provided", async () => {
+      const response = await request(app).get("/api/v1/customer/list-menu-item-for-vendor").set("Authorization", `Bearer ${authToken}`);
 
-      expect(res.status).toBe(500);
-      expect(res.body).toEqual({
-        message: "Internal server error"
-      })
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ message: "Vendor with the given ID not found. Please enter a valid ID" });
+    });
+
+    it("should return 404 if no menu items are found for a given vendor ID", async () => {
+      const response = await request(app).get("/api/v1/customer/list-menu-item-for-vendor?vendorId=999").set("Authorization", `Bearer ${authToken}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ message: "No menu items found for vendor ID 999." });
     });
   });
 
-  describe("GET /api/v1/customer/list-menu-item-for-vendor", () => {
-    it("should return the menu items for a vendor with valid ID", async () => {
-      const vendorId = 1;
+  describe("viewVendor", () => {
+    it("should return the details of a vendor in the database", async () => {
+        const response = await request(app).get("/api/v1/customer/vendor-info?name=vendor1").set("Authorization", `Bearer ${authToken}`);
 
-      const res = await request(server).get("/api/v1/customer/list-menu-item-for-vendor").query({ vendorId });
-
-      expect(res.status).toBe(200);
-      expect(res.body).toEqual([
-        { id: 1, name: "item 1", description: "best item", price: 10.00 },
-        { id: 2, name: "item 2", description: "cool item", price: 2.00 }
-      ]);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id: expect.any(Number),
+            name: "Vendor1",
+            email: "vendor1@example.com",
+            role: "vendor"
+        });
     });
 
-    it("should return 404 when a vendor with an invalid ID is passed", async () => {
-      const vendorId = 999;
+    it("should return 404 if the vendor Id is invalid or not found", async () => {
+        const response = await request(app).get("/api/v1/customer/vendor-info?name=null").set("Authorization", `Bearer ${authToken}`);
 
-      const res = await request(server).get("/api/v1/customer/list-menu-item-for-vendor").query({ vendorId });
-
-      expect(res.status).toBe(404);
-      expect(res.body).toEqual({
-        message: `No menu items found for vendor ID ${vendorId}.`
-      });
-    });
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({
+            message: "Vendor not found"
+        })
+    })
   });
+
+  describe("viewMenuItemDetail", () => {
+    it("should return the detail of a given menu item with a valid ID", async () => {
+        const itemId = 1;
+        const response = await request(app).get(`/api/v1/customer/menu-item-details?itemId=${itemId}`).set("Authorization", `Bearer ${authToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id: itemId,
+            vendorId: 1,
+            name: "MenuItem1",
+            price: "10.00",
+            description: "Menu item 1 for vendorId 1"
+        });
+    });
+
+    it("should return 400 if itemId is not provided", async () => {
+        const response = await request(app).get("/api/v1/customer/menu-item-details").set("Authorization", `Bearer ${authToken}`);
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({ message: "Item ID is required." });
+    });
+
+    it("should return 404 if no item is found for the given ID", async () => {
+        const response = await request(app).get("/api/v1/customer/menu-item-details?itemId=999").set("Authorization", `Bearer ${authToken}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({ message: "Item not found" });
+    });
+  })
 });
