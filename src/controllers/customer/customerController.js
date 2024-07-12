@@ -12,7 +12,7 @@ const Controller = {
     },
 
     listMenuItemForVendor: async (req, res) => {
-        const vendorId = req.query.vendorId;
+        const vendorId = req.params.vendorId;
         if (!vendorId) {
             return res.status(404).json({ message: "Vendor with the given ID not found. Please enter a valid ID"})
         }
@@ -29,7 +29,7 @@ const Controller = {
     },
 
     viewVendor: async (req, res) => {
-        const { name } = req.query;
+        const { name } = req.params;
         try {
             const vendor = await customerService.getVendorByName(name);
             if (!vendor) {
@@ -43,7 +43,7 @@ const Controller = {
 
     viewMenuItemDetail: async (req, res) => {
         const { itemId } = req.query;
-
+        
         if (!itemId) {
             return res.status(400).json({ message: "Item ID is required."})
         }
