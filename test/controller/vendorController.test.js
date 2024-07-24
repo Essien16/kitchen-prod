@@ -4,7 +4,7 @@ const server = require("../../src/index");
 describe("Vendor Controller", () => {
     describe("viewVendorController", () => {
         it("should return the details of the vendor", async () => {
-            const response = await request(server).get("/api/v1/vendor/view-vendor-profile?name=vendor1");
+            const response = await request(server).get("/api/v1/vendor/profile?vendorId=vendor1");
 
             expect(response.status).toBe(200);
             expect(response.body).toEqual({

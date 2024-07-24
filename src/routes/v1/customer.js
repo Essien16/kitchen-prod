@@ -8,9 +8,9 @@ const router = express.Router();
 router.post("/signup", customerAuthController.signup);
 router.post("/login", customerAuthController.login);
 router.get("/vendors", auth, customerController.listVendor);
-router.get("/vendors/:vendorId", auth, customerController.viewVendor); 
+router.get("/vendors/:name", auth, customerController.viewVendor); 
 router.get("/vendors/:vendorId/menu-items", auth, customerController.listMenuItemForVendor);
-router.get("/menu-items/:menuItemId", auth, customerController.viewMenuItemDetail); 
+router.get("/menu-item-detail", auth, customerController.viewMenuItemDetail); 
 
 module.exports = {
     baseUrl: "/customer",

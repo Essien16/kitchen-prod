@@ -39,15 +39,6 @@ class Vendor {
             throw new Error(`Error fetching vendors: ${error.message}`)
         }
     }
-
-    // static async clearTable() {
-    //     const sql = `DELETE FROM vendors`;
-    //     try {
-    //         await db.execute(sql);
-    //     } catch (error) {
-    //         throw new Error(`Error clearing vendors table: ${error.message}`);
-    //     }
-    // }
 };
 
 module.exports = Vendor;

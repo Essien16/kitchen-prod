@@ -44,33 +44,33 @@ const vendorController = {
     },
 
     updateMenuItem: async (req, res) => {
-        const { itemId } = req.params; 
+        const { id } = req.params; 
         const { name, description, price } = req.body;
 
-        if (!itemId || !name || !description || !price) {
+        if (!id || !name || !description || !price) {
             return res.status(400).json({ message: "All fields required to update Menu" });
         }
 
         try {
-            const affectedRows = await vendorService.updateMenuItem(itemId, name, description, price);
+            const affectedRows = await vendorService.updateMenuItem(id, name, description, price);
             if (affectedRows === 0) {
                 return res.status(404).json({ message: "Menu item not found" });
             }
             return res.status(200).json({ message: "Menu Item updated successfully." });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Internal server error." });
+            return res.status(500).json({ message: "Internal server error" });
         }
     },
 
     deleteMenuItem: async (req, res) => {
-        const { itemId } = req.params; 
+        const { id } = req.params; 
 
-        if (!itemId) {
+        if (!id) {
             return res.status(400).json({ message: "Menu item with the given Id does not exist." });
         }
         try {
-            const affectedRows = await vendorService.deleteMenuItem(itemId);
+            const affectedRows = await vendorService.deleteMenuItem(id);
             if (affectedRows === 0) {
                 return res.status(404).json({ message: "Menu item does not exist." });
             }
